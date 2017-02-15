@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Jim-Holmstroem <jim.holmstroem@gmail.com>"]
 
 [dependencies]
+libc = "0.2.20"
 
 [lib]
 name = "rust"
