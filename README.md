@@ -9,5 +9,5 @@ cd -
 
 ## Run
 ```bash
-luajit lua/hello_ffi.lua
+LD_LIBRARY_PATH=rust/target/release/ luajit lua/hello_ffi.lua
 ```
