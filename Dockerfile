@@ -7,9 +7,8 @@ RUN apt-get update && \
         cargo \
         luajit
 
-# rustc + cargo is rather old
+WORKDIR /root
 
-USER user
-WORKDIR /home/user
+# rustc + cargo is rather old in Ubuntu:16
 
-ENTRYPOINT [ "/usr/bin/make", "-f", "/home/user/Makefile" ]
+ENTRYPOINT [ "/bin/sh", "-c" ]
