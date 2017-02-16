@@ -29,13 +29,17 @@ pub extern fn duplicate(
     count: i64,
     c_msg: *const c_char,
 ) -> *mut c_char {
-    let msg = unsafe { CStr::from_ptr(c_msg) }.to_str().unwrap();
+    let msg = unsafe { CStr::from_ptr(c_msg) }
+        .to_str()
+        .unwrap();
 
     let out = std::iter::repeat(msg)
         .take(count as usize)
         .collect::<String>();
 
-    CString::new(out).unwrap().into_raw()
+    CString::new(out)
+        .unwrap()
+        .into_raw()
 }
 
 #[no_mangle]
@@ -44,15 +48,15 @@ pub extern fn release(msg: *mut c_char) {
 }
 
 #[repr(C)]
-pub struct Point {
-    x: i32,
-    y: i32,
-}
-
-#[repr(C)]
 pub struct DuplicateString {
     msg: *const c_char,
     count: i32,
+}
+
+#[repr(C)]
+pub struct Point {
+    x: i32,
+    y: i32,
 }
 
 #[no_mangle]
