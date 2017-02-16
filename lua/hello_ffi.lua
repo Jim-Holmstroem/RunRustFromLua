@@ -26,15 +26,16 @@ function duplicate(count, msg)
     return str
 end
 
-local point
-local mt = {
-    __add = function(a, b)
-        local c = point()
-        rust.add_points(a, b, c)
-        return c
-    end
-}
-point = ffi.metatype("point_t", mt)
+point = ffi.metatype(
+    "point_t",
+    {
+        __add = function(a, b)
+            local c = point()
+            rust.add_points(a, b, c)
+            return c
+        end
+    }
+)
 
 rust.hello()
 print(rust.add(13, 37))
