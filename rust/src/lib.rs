@@ -49,7 +49,7 @@ pub extern fn duplicate(
         .take(count as usize)
         .collect::<String>();
 
-    CString::new(out)
+    CString::new(out)  // TODO unable to to_c_string here.. (mut vs. const)
         .unwrap()
         .into_raw()
 }
