@@ -1,14 +1,9 @@
 extern crate libc;
 
-use libc::{
-    c_char,
-    c_void,
-    free,
-    malloc,
-    memcpy,
-};
+use libc::c_char;
 
 use std::ffi::CStr;
+use std::ffi::CString;
 
 #[no_mangle]
 pub extern fn hello() {
@@ -27,21 +22,16 @@ pub extern fn length(str: *const c_char) -> i64 {
 }
 
 #[no_mangle]
-pub extern fn duplicate(count: i64, msg: *const c_char) -> *mut c_char {
-    let len = length(msg);
+pub extern fn duplicate(count: i64, c_msg: *const c_char) -> *mut c_char {
+    let msg = unsafe { CStr::from_ptr(c_msg) }.to_str().unwrap();
 
-    unsafe {
-        let out = malloc((count * len + 1) as usize);
+    let out = std::iter::repeat(msg).take(count as usize)
+        .collect::<String>();
 
-        for i in 0..count {
-            memcpy(out.offset((i * len) as isize), msg as *mut c_void,
-                len as usize);
-        }
-        out as *mut c_char
-    }
+    CString::new(out).unwrap().into_raw()
 }
 
 #[no_mangle]
-pub extern fn release(msg: *const c_char) {
-    unsafe { free(msg as *mut c_void) }
+pub extern fn release(msg: *mut c_char) {
+    unsafe { CString::from_raw(msg) };
 }

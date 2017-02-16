@@ -5,7 +5,7 @@ ffi.cdef[[
     int64_t add(int64_t, int64_t);
     int64_t length(const char *);
     char *duplicate(int64_t, const char *msg);
-    void release(const char *);
+    void release(char *);
 ]]
 local rust = ffi.load("rust")
 
