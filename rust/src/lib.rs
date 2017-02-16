@@ -35,3 +35,19 @@ pub extern fn duplicate(count: i64, c_msg: *const c_char) -> *mut c_char {
 pub extern fn release(msg: *mut c_char) {
     unsafe { CString::from_raw(msg) };
 }
+
+#[repr(C)]
+pub struct Point {
+    x : i32,
+    y : i32,
+}
+
+#[no_mangle]
+pub extern fn add_points(c_p1: *const Point, c_p2: *const Point, c_result: *mut Point) {
+    let p1 = unsafe { &*c_p1 };
+    let p2 = unsafe { &*c_p2 };
+    let mut result = unsafe { &mut *c_result };
+
+    result.x = p1.x + p2.x;
+    result.y = p1.y + p2.y;
+}
