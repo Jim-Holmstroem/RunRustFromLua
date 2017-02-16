@@ -1,12 +1,13 @@
 local ffi = require("ffi")
 
 ffi.cdef[[
-void hello();
-int64_t add(int64_t, int64_t);
-int64_t length(const char *);
-char *duplicate(int64_t, const char *msg);
-// stdlib
-void free(void *);
+    void hello();
+    int64_t add(int64_t, int64_t);
+    int64_t length(const char *);
+    char *duplicate(int64_t, const char *msg);
+
+    // stdlib
+    void free(void *);
 ]]
 local rust = ffi.load("rust")
 
