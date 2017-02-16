@@ -75,7 +75,17 @@ pub extern fn add_duplicate_strings(
 ) {
     let (ds1, ds2, mut result) = unsafe { (&*c_ds1, &*c_ds2, &mut *c_result) };
 
-    result.msg = ds1.msg;
+    let ds1msg = unsafe { CStr::from_ptr(ds1.msg) }
+        .to_str()
+        .unwrap();
+
+    let ds2msg = unsafe { CStr::from_ptr(ds2.msg) }
+        .to_str()
+        .unwrap();
+
+    result.msg = CString::new(ds1msg.to_owned() + ds2msg)
+        .unwrap()
+        .into_raw();
     result.count = ds1.count + ds2.count;
 }
 

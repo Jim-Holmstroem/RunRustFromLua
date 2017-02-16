@@ -48,8 +48,8 @@ duplicate_string = ffi.metatype(
         end,
         __tostring = function(a)
             return string.format(
-                "duplicate_string(%s, %d)",
-                a.msg,
+                "duplicate_string(\"%s\", %d)",
+                ffi.string(a.msg),
                 a.count
             )
         end,
