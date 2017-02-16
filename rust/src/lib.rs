@@ -1,10 +1,13 @@
 extern crate libc;
 
-use libc::c_char;
-use libc::c_void;
-use libc::free;
-use libc::malloc;
-use libc::memcpy;
+use libc::{
+    c_char,
+    c_void,
+    free,
+    malloc,
+    memcpy,
+};
+
 use std::ffi::CStr;
 
 #[no_mangle]
