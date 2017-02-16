@@ -25,27 +25,25 @@ pub extern fn length(str: *const c_char) -> i64 {
 }
 
 
-//fn to_str(c_str: *const c_char) -> String {
-//    unsafe { CStr::from_ptr(c_str) }
-//        .to_str()
-//        .unwrap()
-//
-//}
-//
-//fn to_c_string(string: String) -> *const c_char {
-//    CString::new(string)
-//        .unwrap()
-//        .into_raw()
-//}
+fn to_str<'a>(c_str: *const c_char) -> &'a str {
+    unsafe { CStr::from_ptr(c_str) }
+        .to_str()
+        .unwrap()
+
+}
+
+fn to_c_string(string: String) -> *const c_char {
+    CString::new(string)
+        .unwrap()
+        .into_raw()
+}
 
 #[no_mangle]
 pub extern fn duplicate(
     count: i64,
     c_msg: *const c_char,
 ) -> *mut c_char {
-    let msg = unsafe { CStr::from_ptr(c_msg) }
-        .to_str()
-        .unwrap();
+    let msg = to_str(c_msg);
 
     let out = std::iter::repeat(msg)
         .take(count as usize)
@@ -73,19 +71,16 @@ pub extern fn add_duplicate_strings(
     c_ds2: *const DuplicateString,
     c_result: *mut DuplicateString,
 ) {
-    let (ds1, ds2, mut result) = unsafe { (&*c_ds1, &*c_ds2, &mut *c_result) };
+    let (ds1, ds2, mut result) = unsafe { (
+        &*c_ds1,
+        &*c_ds2,
+        &mut *c_result
+    ) };
 
-    let ds1msg = unsafe { CStr::from_ptr(ds1.msg) }
-        .to_str()
-        .unwrap();
+    let ds1msg = to_str(ds1.msg);
+    let ds2msg = to_str(ds2.msg);
 
-    let ds2msg = unsafe { CStr::from_ptr(ds2.msg) }
-        .to_str()
-        .unwrap();
-
-    result.msg = CString::new(ds1msg.to_owned() + ds2msg)
-        .unwrap()
-        .into_raw();
+    result.msg = to_c_string([ds1msg, ds2msg].join("|"));
     result.count = ds1.count + ds2.count;
 }
 

@@ -42,6 +42,7 @@ duplicate_string = ffi.metatype(
         __add = function(a, b)
             local result = duplicate_string()
 
+            -- how releases the memory?
             rust.add_duplicate_strings(a, b, result)
 
             return result
