@@ -12,10 +12,10 @@ WORKDIR /root
 # rustc + cargo is rather old in Ubuntu:16
 
 COPY rust/Cargo.* rust/
-RUN cd rust; cargo update; cd -;
+RUN cd rust && cargo update && cd -
 
 COPY rust rust
-RUN cd rust; cargo build --release; cd -;
+RUN cd rust && cargo build --release && cd -
 
 COPY lua lua
 
