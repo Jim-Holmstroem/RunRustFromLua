@@ -49,6 +49,12 @@ pub struct Point {
     y: i32,
 }
 
+#[repr(C)]
+pub struct DuplicateString {
+    msg: *const c_char,
+    count: i32,
+}
+
 #[no_mangle]
 pub extern fn add_points(
     c_p1: *const Point,

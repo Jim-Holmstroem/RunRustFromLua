@@ -11,6 +11,11 @@ ffi.cdef[[
         int32_t x, y;
     } point_t;
     void add_points(const point_t *, const point_t *, point_t *);
+
+    typedef struct {
+        const char * msg;
+        int32_t count;
+    } duplicate_string_t;
 ]]
 local rust = ffi.load("rust")
 
