@@ -5,16 +5,14 @@ ffi.cdef[[
     int64_t add(int64_t, int64_t);
     int64_t length(const char *);
     char *duplicate(int64_t, const char *msg);
-
-    // stdlib
-    void free(void *);
+    void release(const char *);
 ]]
 local rust = ffi.load("rust")
 
 function duplicate(count, msg)
     local c_str = rust.duplicate(count, msg)
     local str = ffi.string(c_str)
-    ffi.C.free(c_str)
+    rust.release(c_str)
     return str
 end
 

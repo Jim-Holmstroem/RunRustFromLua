@@ -2,6 +2,7 @@ extern crate libc;
 
 use libc::c_char;
 use libc::c_void;
+use libc::free;
 use libc::malloc;
 use libc::memcpy;
 use std::ffi::CStr;
@@ -35,4 +36,9 @@ pub extern fn duplicate(count: i64, msg: *const c_char) -> *mut c_char {
         }
         out as *mut c_char
     }
+}
+
+#[no_mangle]
+pub extern fn release(msg: *const c_char) {
+    unsafe { free(msg as *mut c_void) }
 }
