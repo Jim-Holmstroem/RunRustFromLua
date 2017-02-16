@@ -24,6 +24,20 @@ pub extern fn length(str: *const c_char) -> i64 {
     c_str.to_bytes().len() as i64
 }
 
+
+//fn to_str(c_str: *const c_char) -> String {
+//    unsafe { CStr::from_ptr(c_str) }
+//        .to_str()
+//        .unwrap()
+//
+//}
+//
+//fn to_c_string(string: String) -> *const c_char {
+//    CString::new(string)
+//        .unwrap()
+//        .into_raw()
+//}
+
 #[no_mangle]
 pub extern fn duplicate(
     count: i64,
@@ -51,6 +65,18 @@ pub extern fn release(msg: *mut c_char) {
 pub struct DuplicateString {
     msg: *const c_char,
     count: i32,
+}
+
+#[no_mangle]
+pub extern fn add_duplicate_strings(
+    c_ds1: *const DuplicateString,
+    c_ds2: *const DuplicateString,
+    c_result: *mut DuplicateString,
+) {
+    let (ds1, ds2, mut result) = unsafe { (&*c_ds1, &*c_ds2, &mut *c_result) };
+
+    result.msg = ds1.msg;
+    result.count = ds1.count + ds2.count;
 }
 
 #[repr(C)]
