@@ -25,7 +25,10 @@ pub extern fn length(str: *const c_char) -> i64 {
 }
 
 #[no_mangle]
-pub extern fn duplicate(count: i64, c_msg: *const c_char) -> *mut c_char {
+pub extern fn duplicate(
+    count: i64,
+    c_msg: *const c_char,
+) -> *mut c_char {
     let msg = unsafe { CStr::from_ptr(c_msg) }.to_str().unwrap();
 
     let out = std::iter::repeat(msg)
