@@ -44,9 +44,7 @@ pub struct Point {
 
 #[no_mangle]
 pub extern fn add_points(c_p1: *const Point, c_p2: *const Point, c_result: *mut Point) {
-    let p1 = unsafe { &*c_p1 };
-    let p2 = unsafe { &*c_p2 };
-    let mut result = unsafe { &mut *c_result };
+    let (p1, p2, mut result) = unsafe { (&*c_p1, &*c_p2, &mut *c_result) };
 
     result.x = p1.x + p2.x;
     result.y = p1.y + p2.y;
