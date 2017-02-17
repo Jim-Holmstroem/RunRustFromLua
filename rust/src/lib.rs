@@ -32,7 +32,7 @@ fn to_str<'a>(c_str: *const c_char) -> &'a str {
 
 }
 
-fn to_c_string(string: String) -> *const c_char {
+fn to_c_string(string: String) -> *mut c_char {
     CString::new(string)
         .unwrap()
         .into_raw()
@@ -49,9 +49,7 @@ pub extern fn duplicate(
         .take(count as usize)
         .collect::<String>();
 
-    CString::new(out)  // TODO unable to to_c_string here.. (mut vs. const)
-        .unwrap()
-        .into_raw()
+    to_c_string(out)
 }
 
 #[no_mangle]
@@ -77,8 +75,7 @@ pub extern fn add_duplicate_strings(
         &mut *c_result
     ) };
 
-    let ds1msg = to_str(ds1.msg);
-    let ds2msg = to_str(ds2.msg);
+    let (ds1msg, ds2msg) = (to_str(ds1.msg), to_str(ds2.msg));
 
     result.msg = to_c_string([ds1msg, ds2msg].join("|"));
     result.count = ds1.count + ds2.count;
