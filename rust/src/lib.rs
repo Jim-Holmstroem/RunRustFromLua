@@ -98,3 +98,32 @@ pub extern fn add_points(
     result.x = p1.x + p2.x;
     result.y = p1.y + p2.y;
 }
+
+
+mod tokens {
+
+    struct Token {
+        name: String,
+        created: i64,
+        expire: i64
+    }
+
+    impl Token {
+        fn new(string: String) -> Option<Token> { // TODO(gardell): Return Result with appropriate error code
+            let mut pieces = string.split(':');
+            match (pieces.next(), pieces.next(), pieces.next()) {
+                (Some(name), Some(created), Some(expire))
+                    => match (created.parse(), expire.parse()) {
+                        (Ok(created_int), Ok(expire_int))
+                        => Some(Token{
+                            name: name.to_owned(),
+                            created: created_int,
+                            expire: expire_int
+                        }),
+                        _ => None
+                    },
+                _ => None
+            }
+        }
+    }
+}
