@@ -4,7 +4,8 @@ ffi.cdef[[
     void hello();
     int64_t add(int64_t, int64_t);
     int64_t length(const char *);
-    char *duplicate(int64_t, const char *msg);
+    char *duplicate(int64_t, const char *);
+
     void release(char *);
 
     typedef struct {
@@ -17,7 +18,7 @@ ffi.cdef[[
     );
 
     typedef struct {
-        const char * msg;
+        const char *msg;
         int32_t count;
     } duplicate_string_t;
     void add_duplicate_strings(
@@ -26,6 +27,15 @@ ffi.cdef[[
         duplicate_string_t *
     );
 
+    typedef struct {
+        const char *name; // TODO(gardell): manage dangling pointer
+        int64_t created;
+        int64_t expire;
+    } token_t;
+
+    int32_t new_token(
+        const char *,
+        token_t *);
 ]]
 local rust = ffi.load("rust")
 
@@ -36,6 +46,7 @@ function duplicate(count, msg)
     return str
 end
 
+local duplicate_string
 duplicate_string = ffi.metatype(
     "duplicate_string_t",
     {
@@ -57,6 +68,7 @@ duplicate_string = ffi.metatype(
     }
 )
 
+local point
 point = ffi.metatype(
     "point_t",
     {
@@ -88,3 +100,53 @@ print(p)
 local ds = duplicate_string("Tipi Tais ", 3) + duplicate_string("Lee ba Time ", 2)
 
 print(ds)
+
+local c_token
+c_token = ffi.metatype(
+    "token_t",
+    {
+        __tostring = function(a)
+            return string.format(
+                "token(name: %s, created: %d, expire: %d)",
+                ffi.string(a.name), tonumber(a.created), tonumber(a.expire)
+            )
+        end
+    }
+)
+
+local new_c_token = function(str_token)
+    t = c_token()
+    rust.new_token(str_token, t)
+    return t
+end
+
+local token = {}
+token.__index = token
+
+function token:new(str)
+    local t = {}
+    setmetatable(t, token)
+    t.c_token = new_c_token(str)
+    return t
+end
+
+function token:get_name(t)
+    return ffi.string(t.c_token.name)
+end
+
+function token:get_created(t)
+    return tonumber(t.c_token.created) -- TODO(gardell): Use float and no tonumber
+end
+
+function token:get_expire(t)
+    return tonumber(t.c_token.expire) -- TODO(gardell): Use float and no tonumber
+end
+
+function token:__tostring(t)
+    return string.format(
+        "token(name: %s, created: %d, expire: %d)",
+        t:get_name(), t:get_created(), t:get_expire()
+    )
+end
+
+print(token.new("bajs:13:37"))

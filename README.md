@@ -10,3 +10,10 @@ Runs within a docker container so that the demonstration to be fairly platform i
 ```bash
 make run
 ```
+
+## Note
+Many failures in Lua FFI produce the completely unrelated error message
+```
+luajit: bad argument #1 to '?' (cannot convert 'const char *' to 'char *')
+```
+check the functions are exported correctly (pub module, pub function, no_mangle etc).

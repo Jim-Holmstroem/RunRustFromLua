@@ -102,23 +102,22 @@ pub extern fn add_points(
 
 mod tokens {
 
-    struct Token {
-        name: String,
-        created: i64,
-        expire: i64
+    pub struct Token {
+        pub name: String,
+        pub created: i64,
+        pub expire: i64
     }
 
     impl Token {
-        fn new(string: String) -> Option<Token> {
+        pub fn new(string: &str) -> Option<Token> {
             // TODO(gardell): Return Result with appropriate error code
 
-            let parse = |p| { p.parse().ok() };
             let mut pieces = string.split(':');
 
             match (
                 pieces.next(),
-                pieces.next().and_then(parse),
-                pieces.next().and_then(parse)
+                pieces.next().and_then(|p| { p.parse().ok() }),
+                pieces.next().and_then(|p| { p.parse().ok() })
             ) {
                 (Some(name), Some(created), Some(expire))
                 => Some(Token{
@@ -129,5 +128,32 @@ mod tokens {
                 _ => None
             }
         }
+    }
+}
+
+pub mod c_tokens {
+
+    use libc::c_char;
+
+    #[repr(C)]
+    pub struct Token {
+        name: *const c_char,
+        // TODO(gardell): Lua wants float
+        created: i64,
+        expire: i64
+    }
+
+    #[no_mangle]
+    pub extern fn new_token(
+        c_string: *const c_char,
+        c_token: *mut Token
+    )->i32 {
+        let (string, token) = unsafe { (&*c_string, &mut *c_token) };
+
+        ::tokens::Token::new(::to_str(string)).map(|t| {
+            token.name = ::to_c_string(t.name);
+            token.created = t.created;
+            token.expire = t.expire;
+        }).is_some() as i32
     }
 }
