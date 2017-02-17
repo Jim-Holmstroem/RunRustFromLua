@@ -109,19 +109,23 @@ mod tokens {
     }
 
     impl Token {
-        fn new(string: String) -> Option<Token> { // TODO(gardell): Return Result with appropriate error code
+        fn new(string: String) -> Option<Token> {
+            // TODO(gardell): Return Result with appropriate error code
+
+            let parse = |p| { p.parse().ok() };
             let mut pieces = string.split(':');
-            match (pieces.next(), pieces.next(), pieces.next()) {
+
+            match (
+                pieces.next(),
+                pieces.next().and_then(parse),
+                pieces.next().and_then(parse)
+            ) {
                 (Some(name), Some(created), Some(expire))
-                    => match (created.parse(), expire.parse()) {
-                        (Ok(created_int), Ok(expire_int))
-                        => Some(Token{
-                            name: name.to_owned(),
-                            created: created_int,
-                            expire: expire_int
-                        }),
-                        _ => None
-                    },
+                => Some(Token{
+                    name: name.to_owned(),
+                    created: created,
+                    expire: expire
+                }),
                 _ => None
             }
         }
