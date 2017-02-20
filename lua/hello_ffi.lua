@@ -101,45 +101,39 @@ local ds = duplicate_string("Tipi Tais ", 3) + duplicate_string("Lee ba Time ", 
 
 print(ds)
 
-local c_token
-c_token = ffi.metatype(
-    "token_t",
-    {
-        __tostring = function(a)
-            return string.format(
-                "token(name: %s, created: %d, expire: %d)",
-                ffi.string(a.name), tonumber(a.created), tonumber(a.expire)
-            )
-        end
-    }
-)
-
-local new_c_token = function(str_token)
-    t = c_token()
-    rust.new_token(str_token, t)
-    return t
-end
-
-local token = {}
+local token = {
+    metatype = ffi.metatype(
+        "token_t",
+        {
+            __tostring = function(a)
+                return string.format(
+                    "token(name: %s, created: %d, expire: %d)",
+                    ffi.string(a.name), tonumber(a.created), tonumber(a.expire)
+                )
+            end
+        }
+    )
+}
 token.__index = token
 
 function token.new(str)
     local t = {}
     setmetatable(t, token)
-    t.c_token = new_c_token(str)
+    t.c_type = token.metatype()
+    rust.new_token(str, t.c_type)
     return t
 end
 
 function token:get_name()
-    return ffi.string(self.c_token.name)
+    return ffi.string(self.c_type.name)
 end
 
 function token:get_created()
-    return tonumber(self.c_token.created) -- TODO(gardell): Use float and no tonumber
+    return tonumber(self.c_type.created) -- TODO(gardell): Use float and no tonumber
 end
 
 function token:get_expire()
-    return tonumber(self.c_token.expire) -- TODO(gardell): Use float and no tonumber
+    return tonumber(self.c_type.expire) -- TODO(gardell): Use float and no tonumber
 end
 
 function token:__tostring()
