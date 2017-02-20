@@ -123,29 +123,29 @@ end
 local token = {}
 token.__index = token
 
-function token:new(str)
+function token.new(str)
     local t = {}
     setmetatable(t, token)
     t.c_token = new_c_token(str)
     return t
 end
 
-function token:get_name(t)
-    return ffi.string(t.c_token.name)
+function token:get_name()
+    return ffi.string(self.c_token.name)
 end
 
-function token:get_created(t)
-    return tonumber(t.c_token.created) -- TODO(gardell): Use float and no tonumber
+function token:get_created()
+    return tonumber(self.c_token.created) -- TODO(gardell): Use float and no tonumber
 end
 
-function token:get_expire(t)
-    return tonumber(t.c_token.expire) -- TODO(gardell): Use float and no tonumber
+function token:get_expire()
+    return tonumber(self.c_token.expire) -- TODO(gardell): Use float and no tonumber
 end
 
-function token:__tostring(t)
+function token:__tostring()
     return string.format(
         "token(name: %s, created: %d, expire: %d)",
-        t:get_name(), t:get_created(), t:get_expire()
+        self:get_name(), self:get_created(), self:get_expire()
     )
 end
 

@@ -148,9 +148,8 @@ pub mod c_tokens {
         c_string: *const c_char,
         c_token: *mut Token
     )->i32 {
-        let (string, token) = unsafe { (&*c_string, &mut *c_token) };
-
-        ::tokens::Token::new(::to_str(string)).map(|t| {
+        let (string, token) = unsafe { (::to_str(&*c_string), &mut *c_token) };
+        ::tokens::Token::new(string).map(|t| {
             token.name = ::to_c_string(t.name);
             token.created = t.created;
             token.expire = t.expire;
