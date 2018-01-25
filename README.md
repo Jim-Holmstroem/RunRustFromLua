@@ -1,3 +1,9 @@
+# DEPRECATED!!
+# Superseeded by: Rust Lua FFI
+Fully superseeded by https://github.com/distil/rust_lua_ffi/ easy to use automatic FFI code generation.
+
+All PRs to this repository will be closed.
+
 # RunRustFromLua
 
 Simple showcase on how to call Rust functions from Lua FFI.
